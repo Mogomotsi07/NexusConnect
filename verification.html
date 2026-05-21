@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .trust-ring-container{text-align:center;padding:2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:2rem}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>✓ Trust & Verification</h1>
+        <p>Complete verifications to increase your trust score and unlock higher tiers.</p>
+      </div>
+
+      <!-- Trust Score -->
+      <div class="trust-ring-container">
+        <div class="trust-score-ring">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="var(--border)" stroke-width="8"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="339.292" id="trustCircle" stroke-linecap="round"/>
+          </svg>
+          <div class="score">
+            <div class="value" id="trustScore">0</div>
+            <div class="label">Trust Score</div>
+          </div>
+        </div>
+        <p class="text-secondary" style="max-width:400px;margin:0 auto">Your trust score helps other users feel confident transacting with you. Complete verifications to improve it.</p>
+      </div>
+
+      <!-- Verification Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="verification-card" id="cardEmail">
+          <div class="verification-card-header">
+            <div class="verification-card-icon">📧</div>
+            <div>
+              <h4>Email Verification</h4>
+              <p class="text-sm text-muted">Verify your email address</p>
+            </div>
+          </div>
+          <p class="text-secondary mb-4">Your email is already verified upon registration. This is the foundation of your trust score.</p>
+          <span class="tag tag-success" id="statusEmail">✓ Verified</span>
+        </div>
+
+        <div class="verification-card" id="cardPhone">
+          <div class="verification-card-header">
+            <div class="verification-card-icon">📱</div>
+            <div>
+              <h4>Phone Verification</h4>
+              <p class="text-sm text-muted">Add and verify your phone number</p>
+            </div>
+          </div>
+          <p class="text-secondary mb-4">Add your mobile number for SMS verification. This adds +15 to your trust score.</p>
+          <div id="phoneForm">
+            <div class="input-group">
+              <input type="tel" class="form-input" id="phoneInput" placeholder="+267 XX XXX XXX">
+              <button class="btn btn-primary" onclick="verifyPhone()">Verify</button>
+            </div>
+          </div>
+          <span class="tag tag-muted hidden" id="statusPhone">Pending</span>
+        </div>
+
+        <div class="verification-card" id="cardID">
+          <div class="verification-card-header">
+            <div class="verification-card-icon">🪪</div>
+            <div>
+              <h4>ID Verification</h4>
+              <p class="text-sm text-muted">Upload your Omang or Passport</p>
+            </div>
+          </div>
+          <p class="text-secondary mb-4">Upload a photo of your national ID or passport. This adds +20 to your trust score.</p>
+          <div id="idForm">
+            <div class="form-group">
+              <label class="form-label">ID Number</label>
+              <input type="text" class="form-input" id="idNumber" placeholder="Omang / Passport number">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Upload ID Photo (simulated)</label>
+              <input type="file" class="form-input" id="idFile" accept="image/*">
+            </div>
+            <button class="btn btn-primary" onclick="verifyID()">Submit for Verification</button>
+          </div>
+          <span class="tag tag-muted hidden" id="statusID">Pending</span>
+        </div>
+
+        <div class="verification-card" id="cardStudent">
+          <div class="verification-card-header">
+            <div class="verification-card-icon">🎓</div>
+            <div>
+              <h4>Student Verification</h4>
+              <p class="text-sm text-muted">Verify your student status</p>
+            </div>
+          </div>
+          <p class="text-secondary mb-4">Upload your student ID card or enrollment letter. This adds +20 to your trust score.</p>
+          <div id="studentForm">
+            <div class="form-group">
+              <label class="form-label">Student ID Number</label>
+              <input type="text" class="form-input" id="studentId" placeholder="Student ID">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Institution</label>
+              <input type="text" class="form-input" id="studentInstitution" placeholder="e.g. University of Botswana">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Upload Student ID (simulated)</label>
+              <input type="file" class="form-input" id="studentFile" accept="image/*">
+            </div>
+            <button class="btn btn-primary" onclick="verifyStudent()">Submit for Verification</button>
+          </div>
+          <span class="tag tag-muted hidden" id="statusStudent">Pending</span>
+        </div>
+      </div>
+
+      <!-- Verification Level Info -->
+      <div class="card mt-6">
+        <div class="card-header"><h3>🏅 Verification Levels</h3></div>
+        <div class="card-body">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div style="text-align:center;padding:1rem;background:rgba(205,127,50,0.1);border:1px solid rgba(205,127,50,0.3);border-radius:var(--radius)">
+              <div style="font-size:2rem;margin-bottom:0.5rem">🥉</div>
+              <div class="font-bold">Bronze</div>
+              <div class="text-sm text-muted">0-1 verifications</div>
+            </div>
+            <div style="text-align:center;padding:1rem;background:rgba(192,192,192,0.1);border:1px solid rgba(192,192,192,0.3);border-radius:var(--radius)">
+              <div style="font-size:2rem;margin-bottom:0.5rem">🥈</div>
+              <div class="font-bold">Silver</div>
+              <div class="text-sm text-muted">2 verifications</div>
+            </div>
+            <div style="text-align:center;padding:1rem;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:var(--radius)">
+              <div style="font-size:2rem;margin-bottom:0.5rem">🥇</div>
+              <div class="font-bold">Gold</div>
+              <div class="text-sm text-muted">3 verifications</div>
+            </div>
+            <div style="text-align:center;padding:1rem;background:rgba(229,228,226,0.1);border:1px solid rgba(229,228,226,0.3);border-radius:var(--radius)">
+              <div style="font-size:2rem;margin-bottom:0.5rem">💎</div>
+              <div class="font-bold">Platinum</div>
+              <div class="text-sm text-muted">All 4 verifications</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    function updateTrustDisplay() {
+      const currentUser = Auth.getCurrentUser();
+      const score = Utils.calculateTrustScore(currentUser);
+      document.getElementById('trustScore').textContent = score;
+
+      const circle = document.getElementById('trustCircle');
+      const circumference = 339.292;
+      const offset = circumference - (score / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+
+      const v = currentUser.verifications || {};
+
+      if (v.phone) {
+        document.getElementById('cardPhone').classList.add('verified');
+        document.getElementById('phoneForm').classList.add('hidden');
+        document.getElementById('statusPhone').classList.remove('hidden');
+        document.getElementById('statusPhone').textContent = '✓ Verified';
+        document.getElementById('statusPhone').className = 'tag tag-success';
+      }
+      if (v.id) {
+        document.getElementById('cardID').classList.add('verified');
+        document.getElementById('idForm').classList.add('hidden');
+        document.getElementById('statusID').classList.remove('hidden');
+        document.getElementById('statusID').textContent = '✓ Verified';
+        document.getElementById('statusID').className = 'tag tag-success';
+      }
+      if (v.student) {
+        document.getElementById('cardStudent').classList.add('verified');
+        document.getElementById('studentForm').classList.add('hidden');
+        document.getElementById('statusStudent').classList.remove('hidden');
+        document.getElementById('statusStudent').textContent = '✓ Verified';
+        document.getElementById('statusStudent').className = 'tag tag-success';
+      }
+    }
+
+    function verifyPhone() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!phone) { Toast.show('error', 'Error', 'Enter a phone number.'); return; }
+      Auth.updateUser(user.id, { verifications: { ...(user.verifications || {}), phone: true }, phone });
+      Toast.show('success', 'Verified!', 'Phone number verified successfully.');
+      updateTrustDisplay();
+      UI.renderNav();
+    }
+
+    function verifyID() {
+      const idNum = document.getElementById('idNumber').value.trim();
+      if (!idNum) { Toast.show('error', 'Error', 'Enter your ID number.'); return; }
+      Auth.updateUser(user.id, { verifications: { ...(user.verifications || {}), id: true }, idNumber: idNum });
+      Toast.show('success', 'Submitted!', 'ID verification submitted. +20 trust score added.');
+      updateTrustDisplay();
+      UI.renderNav();
+    }
+
+    function verifyStudent() {
+      const sid = document.getElementById('studentId').value.trim();
+      const inst = document.getElementById('studentInstitution').value.trim();
+      if (!sid || !inst) { Toast.show('error', 'Error', 'Fill all fields.'); return; }
+      Auth.updateUser(user.id, { 
+        verifications: { ...(user.verifications || {}), student: true }, 
+        studentId: sid, 
+        institution: inst 
+      });
+      Toast.show('success', 'Verified!', 'Student status verified. +20 trust score added.');
+      updateTrustDisplay();
+      UI.renderNav();
+    }
+
+    updateTrustDisplay();
+  </script>
+</body>
+</html>

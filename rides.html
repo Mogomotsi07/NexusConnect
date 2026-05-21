@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride Sharing - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .ride-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem}
+    .ride-tab{padding:0.625rem 1.25rem;border-radius:var(--radius-sm);font-size:0.875rem;font-weight:500;cursor:pointer;transition:var(--transition);background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary)}
+    .ride-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+    .ride-tab:hover:not(.active){border-color:var(--border-light);color:var(--text-primary)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .vehicle-form{background:var(--bg-hover);border-radius:var(--radius);padding:1rem;margin-bottom:1rem}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link active">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>🚗 Ride Sharing</h1>
+        <p>Offer rides or find one going your way across Gaborone.</p>
+      </div>
+
+      <div class="ride-tabs">
+        <button class="ride-tab active" data-tab="find">Find a Ride</button>
+        <button class="ride-tab" data-tab="offer">Offer a Ride</button>
+        <button class="ride-tab" data-tab="my">My Rides</button>
+      </div>
+
+      <!-- FIND A RIDE -->
+      <div class="tab-panel active" id="findPanel">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input" id="rideSearch" placeholder="Search by location or destination...">
+        </div>
+        <div class="filter-bar">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="today">Today</button>
+          <button class="filter-chip" data-filter="tomorrow">Tomorrow</button>
+          <button class="filter-chip" data-filter="morning">Morning</button>
+          <button class="filter-chip" data-filter="evening">Evening</button>
+          <button class="filter-chip" data-filter="verified">Verified Only</button>
+        </div>
+        <div id="ridesList"></div>
+        <div id="ridesPagination" class="pagination"></div>
+      </div>
+
+      <!-- OFFER A RIDE -->
+      <div class="tab-panel" id="offerPanel">
+        <div class="card">
+          <div class="card-header"><h3>🚘 Offer a Ride</h3></div>
+          <div class="card-body">
+            <form id="offerRideForm">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label class="form-label">From <span class="required">*</span></label>
+                  <input type="text" class="form-input" id="fromLocation" placeholder="e.g. UB Main Campus" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">To <span class="required">*</span></label>
+                  <input type="text" class="form-input" id="toLocation" placeholder="e.g. Game City Mall" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Date <span class="required">*</span></label>
+                  <input type="date" class="form-input" id="rideDate" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Time <span class="required">*</span></label>
+                  <input type="time" class="form-input" id="rideTime" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Available Seats <span class="required">*</span></label>
+                  <input type="number" class="form-input" id="rideSeats" min="1" max="7" value="3" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price per Seat (P) <span class="required">*</span></label>
+                  <input type="number" class="form-input" id="ridePrice" min="5" placeholder="e.g. 15" required>
+                </div>
+              </div>
+              <div class="form-group mt-4">
+                <label class="form-label">Vehicle</label>
+                <select class="form-select" id="rideVehicle">
+                  <option value="">Select vehicle...</option>
+                </select>
+                <p class="form-hint">Add vehicles in the "My Vehicles" section below</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Additional Options</label>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap">
+                  <label class="form-check"><input type="checkbox" value="AC"> <span>Air Conditioning</span></label>
+                  <label class="form-check"><input type="checkbox" value="Music"> <span>Music</span></label>
+                  <label class="form-check"><input type="checkbox" value="Pets"> <span>Pets OK</span></label>
+                  <label class="form-check"><input type="checkbox" value="Luggage"> <span>Extra Luggage</span></label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-check"><input type="checkbox" id="rideRecurring"> <span>This is a recurring ride</span></label>
+              </div>
+              <button type="submit" class="btn btn-primary">Post Ride</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- My Vehicles -->
+        <div class="card mt-6">
+          <div class="card-header"><h3>🚙 My Vehicles</h3><button class="btn btn-sm btn-outline" onclick="showAddVehicle()">+ Add Vehicle</button></div>
+          <div class="card-body" id="vehicleList">
+            <div class="empty-state">
+              <div class="empty-state-icon">🚙</div>
+              <h3>No Vehicles</h3>
+              <p>Add your vehicle details to offer rides.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY RIDES -->
+      <div class="tab-panel" id="myPanel">
+        <div class="card">
+          <div class="card-header"><h3>📋 Rides I've Offered</h3></div>
+          <div class="card-body" id="myRidesList">
+            <div class="empty-state">
+              <div class="empty-state-icon">🚗</div>
+              <h3>No Rides Offered</h3>
+              <p>Switch to "Offer a Ride" to post your first ride.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-6">
+          <div class="card-header"><h3>📥 Ride Requests</h3></div>
+          <div class="card-body" id="rideRequestsList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📬</div>
+              <h3>No Requests</h3>
+              <p>When someone requests your ride, it will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    // Tab switching
+    document.querySelectorAll('.ride-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.ride-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+      });
+    });
+
+    // Check URL for action
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'offer') {
+      document.querySelector('[data-tab="offer"]').click();
+    }
+
+    // Set default date to today
+    document.getElementById('rideDate').valueAsDate = new Date();
+
+    // Render vehicles
+    function renderVehicles() {
+      const vehicles = Vehicles.getMine(user.id);
+      const select = document.getElementById('rideVehicle');
+      const list = document.getElementById('vehicleList');
+
+      select.innerHTML = '<option value="">Select vehicle...</option>';
+      if (vehicles.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚙</div><h3>No Vehicles</h3><p>Add your vehicle details to offer rides.</p></div>`;
+      } else {
+        list.innerHTML = vehicles.map(v => `
+          <div class="vehicle-card">
+            <div class="vehicle-icon">🚙</div>
+            <div class="vehicle-info">
+              <h5>${Utils.escapeHtml(v.make)} ${Utils.escapeHtml(v.model)} (${v.year})</h5>
+              <p>${Utils.escapeHtml(v.color)} • ${v.seats} seats • ${Utils.escapeHtml(v.plate)}</p>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="deleteVehicle('${v.id}')">Delete</button>
+          </div>
+        `).join('');
+        vehicles.forEach(v => {
+          select.innerHTML += `<option value="${v.id}">${v.make} ${v.model} (${v.year})</option>`;
+        });
+      }
+    }
+    renderVehicles();
+
+    function showAddVehicle() {
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Add Vehicle</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <form id="vehicleForm">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="form-group"><label class="form-label">Make</label><input type="text" class="form-input" id="vMake" required></div>
+                <div class="form-group"><label class="form-label">Model</label><input type="text" class="form-input" id="vModel" required></div>
+                <div class="form-group"><label class="form-label">Year</label><input type="number" class="form-input" id="vYear" min="1990" max="2026" required></div>
+                <div class="form-group"><label class="form-label">Color</label><input type="text" class="form-input" id="vColor" required></div>
+                <div class="form-group"><label class="form-label">Plate Number</label><input type="text" class="form-input" id="vPlate" required></div>
+                <div class="form-group"><label class="form-label">Seats</label><input type="number" class="form-input" id="vSeats" min="1" max="15" value="5" required></div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block mt-4">Add Vehicle</button>
+            </form>
+          </div>
+        </div>
+      `);
+
+      document.getElementById('vehicleForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        Vehicles.create({
+          make: document.getElementById('vMake').value,
+          model: document.getElementById('vModel').value,
+          year: document.getElementById('vYear').value,
+          color: document.getElementById('vColor').value,
+          plate: document.getElementById('vPlate').value,
+          seats: document.getElementById('vSeats').value
+        });
+        Toast.show('success', 'Vehicle Added', 'Your vehicle has been added successfully.');
+        renderVehicles();
+        document.querySelector('.modal-overlay').remove();
+      });
+    }
+
+    function deleteVehicle(id) {
+      if (confirm('Delete this vehicle?')) {
+        Vehicles.delete(id);
+        renderVehicles();
+        Toast.show('success', 'Deleted', 'Vehicle removed.');
+      }
+    }
+
+    // Offer ride form
+    document.getElementById('offerRideForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const options = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value).filter(v => v);
+      const ride = Rides.create({
+        from: document.getElementById('fromLocation').value,
+        to: document.getElementById('toLocation').value,
+        date: document.getElementById('rideDate').value,
+        time: document.getElementById('rideTime').value,
+        seats: document.getElementById('rideSeats').value,
+        price: document.getElementById('ridePrice').value,
+        vehicle: document.getElementById('rideVehicle').value,
+        recurring: document.getElementById('rideRecurring').checked,
+        options
+      });
+      if (ride) {
+        Toast.show('success', 'Ride Posted!', 'Your ride is now live for others to find.');
+        this.reset();
+        document.getElementById('rideDate').valueAsDate = new Date();
+        renderMyRides();
+        renderFindRides();
+      }
+    });
+
+    // Render find rides
+    let currentRides = [];
+    let currentPage = 1;
+    const perPage = 6;
+
+    function renderFindRides() {
+      const all = Rides.getAvailable(user.id);
+      const filter = document.querySelector('.filter-chip.active')?.dataset.filter || 'all';
+      const search = document.getElementById('rideSearch').value.toLowerCase();
+
+      let filtered = all;
+      const today = new Date().toISOString().split('T')[0];
+      const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+      if (filter === 'today') filtered = filtered.filter(r => r.date === today);
+      if (filter === 'tomorrow') filtered = filtered.filter(r => r.date === tomorrow);
+      if (filter === 'morning') filtered = filtered.filter(r => { const h = parseInt(r.time.split(':')[0]); return h < 12; });
+      if (filter === 'evening') filtered = filtered.filter(r => { const h = parseInt(r.time.split(':')[0]); return h >= 17; });
+      if (filter === 'verified') filtered = filtered.filter(r => {
+        const users = Storage.get(KEYS.USERS) || [];
+        const driver = users.find(u => u.id === r.driverId);
+        return driver && Utils.getVerificationLevel(driver).level !== 'Bronze';
+      });
+      if (search) filtered = filtered.filter(r => r.from.toLowerCase().includes(search) || r.to.toLowerCase().includes(search));
+
+      currentRides = filtered;
+      const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      const start = (currentPage - 1) * perPage;
+      const pageRides = filtered.slice(start, start + perPage);
+
+      const container = document.getElementById('ridesList');
+      if (pageRides.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚗</div><h3>No Rides Found</h3><p>Try adjusting your filters or search terms.</p></div>`;
+      } else {
+        container.innerHTML = pageRides.map(ride => {
+          const users = Storage.get(KEYS.USERS) || [];
+          const driver = users.find(u => u.id === ride.driverId);
+          const vLevel = driver ? Utils.getVerificationLevel(driver) : { level: 'Bronze', class: 'bronze' };
+          const opts = ride.options?.map(o => `<span class="tag tag-muted">${o}</span>`).join('') || '';
+          return `
+            <div class="ride-card mb-4">
+              <div class="ride-header">
+                <div class="ride-route">${Utils.escapeHtml(ride.from)} <span class="arrow">→</span> ${Utils.escapeHtml(ride.to)}</div>
+                <span class="verification-badge ${vLevel.class}">${vLevel.level}</span>
+              </div>
+              <div class="ride-body">
+                <div class="ride-details">
+                  <div class="ride-detail">📅 ${Utils.formatDate(ride.date)}</div>
+                  <div class="ride-detail">🕐 ${ride.time}</div>
+                  <div class="ride-detail">👥 ${ride.availableSeats} seats left</div>
+                  <div class="ride-detail">🚙 ${ride.vehicle ? 'Vehicle selected' : 'No vehicle info'}</div>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap">${opts}</div>
+                <div class="ride-driver">
+                  <div class="ride-driver-avatar">${driver ? Utils.initials(driver.name) : '?'}</div>
+                  <div class="ride-driver-info">
+                    <div class="name">${driver ? Utils.escapeHtml(driver.name) : 'Unknown'}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ride-footer">
+                <div class="ride-price">${Utils.formatMoney(ride.price)}<span>/seat</span></div>
+                <div style="display:flex;gap:0.5rem">
+                  <button class="btn btn-sm btn-secondary" onclick="messageDriver('${ride.driverId}', '${ride.id}')">💬 Message</button>
+                  <button class="btn btn-sm btn-primary" onclick="requestRide('${ride.id}')">Request Ride</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Pagination
+      let pagHtml = '';
+      if (totalPages > 1) {
+        pagHtml += `<button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">←</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          pagHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        pagHtml += `<button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">→</button>`;
+      }
+      document.getElementById('ridesPagination').innerHTML = pagHtml;
+    }
+
+    function changePage(p) { currentPage = p; renderFindRides(); }
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentPage = 1;
+        renderFindRides();
+      });
+    });
+    document.getElementById('rideSearch').addEventListener('input', () => { currentPage = 1; renderFindRides(); });
+
+    function requestRide(rideId) {
+      if (Rides.requestRide(rideId)) {
+        Toast.show('success', 'Request Sent!', 'The driver will be notified.');
+        renderFindRides();
+      } else {
+        Toast.show('error', 'Request Failed', 'You may have already requested this ride or no seats available.');
+      }
+    }
+
+    function messageDriver(driverId, rideId) {
+      window.location.href = `messages.html?to=${driverId}&ride=${rideId}`;
+    }
+
+    // Render my rides
+    function renderMyRides() {
+      const myRides = Rides.getMyRides(user.id);
+      const container = document.getElementById('myRidesList');
+      if (myRides.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚗</div><h3>No Rides Offered</h3><p>Switch to "Offer a Ride" to post your first ride.</p></div>`;
+      } else {
+        container.innerHTML = myRides.map(ride => `
+          <div class="ride-card mb-4">
+            <div class="ride-header">
+              <div class="ride-route">${Utils.escapeHtml(ride.from)} → ${Utils.escapeHtml(ride.to)}</div>
+              <span class="tag ${ride.status === 'active' ? 'tag-success' : 'tag-muted'}">${ride.status}</span>
+            </div>
+            <div class="ride-body">
+              <div class="ride-details">
+                <div class="ride-detail">📅 ${Utils.formatDate(ride.date)} at ${ride.time}</div>
+                <div class="ride-detail">👥 ${ride.availableSeats}/${ride.seats} seats</div>
+                <div class="ride-detail">💰 ${Utils.formatMoney(ride.price)}/seat</div>
+                <div class="ride-detail">🔄 ${ride.recurring ? 'Recurring' : 'One-time'}</div>
+              </div>
+            </div>
+            <div class="ride-footer">
+              ${ride.status === 'active' ? `<button class="btn btn-sm btn-success" onclick="completeRide('${ride.id}')">✓ Mark Complete</button>` : '<span class="text-muted">Completed</span>'}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Requests
+      const requests = Rides.getMyRequests(user.id);
+      const reqContainer = document.getElementById('rideRequestsList');
+      if (requests.length === 0) {
+        reqContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📬</div><h3>No Requests</h3><p>When someone requests your ride, it will appear here.</p></div>`;
+      } else {
+        reqContainer.innerHTML = requests.map(req => {
+          const ride = Rides.getAll().find(r => r.id === req.rideId);
+          return `
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(6,182,212,0.15);color:var(--accent)">👤</div>
+              <div class="activity-content">
+                <p><strong>${Utils.escapeHtml(req.passengerName)}</strong> requested ${req.seats} seat(s) on <strong>${ride ? Utils.escapeHtml(ride.from) + ' → ' + Utils.escapeHtml(ride.to) : 'your ride'}</strong></p>
+                <div class="time">${Utils.timeAgo(req.createdAt)}</div>
+              </div>
+              <div style="display:flex;gap:0.5rem">
+                ${req.status === 'pending' ? `
+                  <button class="btn btn-sm btn-success" onclick="acceptRequest('${req.id}')">Accept</button>
+                  <button class="btn btn-sm btn-danger" onclick="declineRequest('${req.id}')">Decline</button>
+                ` : `<span class="tag ${req.status === 'accepted' ? 'tag-success' : 'tag-danger'}">${req.status}</span>`}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function acceptRequest(id) { Rides.acceptRequest(id); Toast.show('success', 'Accepted', 'Ride request accepted!'); renderMyRides(); renderFindRides(); }
+    function declineRequest(id) { Rides.declineRequest(id); Toast.show('warning', 'Declined', 'Ride request declined.'); renderMyRides(); }
+    function completeRide(id) { Rides.completeRide(id); Toast.show('success', 'Completed', 'Ride marked as completed!'); renderMyRides(); }
+
+    renderFindRides();
+    renderMyRides();
+  </script>
+</body>
+</html>

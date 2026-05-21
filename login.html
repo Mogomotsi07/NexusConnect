@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card animate-fade-in">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">N</div>
+        NexusConnect
+      </a>
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Log in to your NexusConnect account</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-check">
+            <input type="checkbox" id="rememberMe">
+            <span>Remember me for 7 days</span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
+          <span>Log In</span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('rememberMe').checked;
+
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner spinner-sm"></div>';
+
+      setTimeout(() => {
+        if (Auth.login(email, password, remember)) {
+          Toast.show('success', 'Welcome back!', 'You have successfully logged in.');
+          setTimeout(() => window.location.href = 'dashboard.html', 800);
+        } else {
+          Toast.show('error', 'Login Failed', 'Invalid email or password. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = '<span>Log In</span>';
+        }
+      }, 600);
+    });
+  </script>
+</body>
+</html>

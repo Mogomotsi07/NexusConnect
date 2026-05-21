@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .market-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem}
+    .market-tab{padding:0.625rem 1.25rem;border-radius:var(--radius-sm);font-size:0.875rem;font-weight:500;cursor:pointer;transition:var(--transition);background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary)}
+    .market-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+    .market-tab:hover:not(.active){border-color:var(--border-light);color:var(--text-primary)}
+    .tab-panel{display:none}.tab-panel.active{display:block}
+    .price-range{display:flex;gap:0.5rem;align-items:center}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link active">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>🛒 Marketplace</h1>
+        <p>Buy and sell textbooks, electronics, clothing, furniture, and more.</p>
+      </div>
+
+      <div class="market-tabs">
+        <button class="market-tab active" data-tab="browse">Browse Items</button>
+        <button class="market-tab" data-tab="sell">Sell an Item</button>
+        <button class="market-tab" data-tab="my">My Listings</button>
+      </div>
+
+      <!-- BROWSE -->
+      <div class="tab-panel active" id="browsePanel">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input" id="itemSearch" placeholder="Search items...">
+        </div>
+        <div class="filter-bar">
+          <button class="filter-chip active" data-cat="all">All</button>
+          <button class="filter-chip" data-cat="textbooks">📚 Textbooks</button>
+          <button class="filter-chip" data-cat="electronics">💻 Electronics</button>
+          <button class="filter-chip" data-cat="clothing">👕 Clothing</button>
+          <button class="filter-chip" data-cat="furniture">🪑 Furniture</button>
+          <button class="filter-chip" data-cat="other">📦 Other</button>
+        </div>
+        <div class="price-range mb-4">
+          <span class="text-sm text-muted">Price:</span>
+          <input type="number" class="form-input" id="minPrice" placeholder="Min" style="width:100px">
+          <span class="text-muted">-</span>
+          <input type="number" class="form-input" id="maxPrice" placeholder="Max" style="width:100px">
+          <button class="btn btn-sm btn-secondary" onclick="renderItems()">Apply</button>
+        </div>
+        <div class="card-grid" id="itemsGrid"></div>
+        <div id="itemsPagination" class="pagination"></div>
+      </div>
+
+      <!-- SELL -->
+      <div class="tab-panel" id="sellPanel">
+        <div class="card">
+          <div class="card-header"><h3>📦 Sell an Item</h3></div>
+          <div class="card-body">
+            <form id="sellForm">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label class="form-label">Title <span class="required">*</span></label>
+                  <input type="text" class="form-input" id="itemTitle" placeholder="e.g. Calculus Textbook 3rd Edition" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Category <span class="required">*</span></label>
+                  <select class="form-select" id="itemCategory" required>
+                    <option value="">Select category</option>
+                    <option value="textbooks">📚 Textbooks</option>
+                    <option value="electronics">💻 Electronics</option>
+                    <option value="clothing">👕 Clothing</option>
+                    <option value="furniture">🪑 Furniture</option>
+                    <option value="other">📦 Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price (P) <span class="required">*</span></label>
+                  <input type="number" class="form-input" id="itemPrice" min="1" step="0.01" placeholder="e.g. 150" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Condition <span class="required">*</span></label>
+                  <select class="form-select" id="itemCondition" required>
+                    <option value="">Select condition</option>
+                    <option value="New">✨ New</option>
+                    <option value="Like New">⭐ Like New</option>
+                    <option value="Good">👍 Good</option>
+                    <option value="Fair">😐 Fair</option>
+                    <option value="Poor">🔧 Poor</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="itemDescription" placeholder="Describe your item in detail..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-input" id="itemLocation" placeholder="e.g. UB Village, Gaborone">
+              </div>
+              <button type="submit" class="btn btn-primary">List Item for Sale</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY LISTINGS -->
+      <div class="tab-panel" id="myPanel">
+        <div class="card">
+          <div class="card-header"><h3>📋 My Listings</h3></div>
+          <div class="card-body" id="myListings"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.querySelectorAll('.market-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.market-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+      });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'sell') document.querySelector('[data-tab="sell"]').click();
+
+    // Category icons
+    const catIcons = { textbooks: '📚', electronics: '💻', clothing: '👕', furniture: '🪑', other: '📦' };
+    const catLabels = { textbooks: 'Textbooks', electronics: 'Electronics', clothing: 'Clothing', furniture: 'Furniture', other: 'Other' };
+
+    let currentItems = [];
+    let currentPage = 1;
+    const perPage = 9;
+
+    function renderItems() {
+      const all = Marketplace.getAll();
+      const cat = document.querySelector('.filter-chip.active')?.dataset.cat || 'all';
+      const search = document.getElementById('itemSearch').value.toLowerCase();
+      const minP = parseFloat(document.getElementById('minPrice').value) || 0;
+      const maxP = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+
+      let filtered = all.filter(i => i.sellerId !== user.id);
+      if (cat !== 'all') filtered = filtered.filter(i => i.category === cat);
+      if (search) filtered = filtered.filter(i => i.title.toLowerCase().includes(search) || i.description.toLowerCase().includes(search));
+      filtered = filtered.filter(i => i.price >= minP && i.price <= maxP);
+
+      currentItems = filtered;
+      const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      const start = (currentPage - 1) * perPage;
+      const pageItems = filtered.slice(start, start + perPage);
+
+      const grid = document.getElementById('itemsGrid');
+      if (pageItems.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🛒</div><h3>No Items Found</h3><p>Try different filters or search terms.</p></div>`;
+      } else {
+        grid.innerHTML = pageItems.map(item => {
+          const users = Storage.get(KEYS.USERS) || [];
+          const seller = users.find(u => u.id === item.sellerId);
+          const vLevel = seller ? Utils.getVerificationLevel(seller) : { level: 'Bronze', class: 'bronze' };
+          const saved = Saved.isSaved('item', item.id);
+          return `
+            <div class="item-card">
+              <div class="item-image">
+                <span style="font-size:3rem">${catIcons[item.category] || '📦'}</span>
+                <span class="tag tag-success condition-badge">${item.condition}</span>
+                <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveItem('${item.id}', this)">♥</button>
+              </div>
+              <div class="item-info">
+                <div class="category">${catLabels[item.category] || item.category}</div>
+                <h4>${Utils.escapeHtml(item.title)}</h4>
+                <p class="description">${Utils.escapeHtml(item.description || '')}</p>
+                <div class="item-meta">
+                  <div class="item-price">${Utils.formatMoney(item.price)}</div>
+                  <div class="item-seller">
+                    <span>${seller ? Utils.initials(seller.name) : '?'}</span>
+                    <span>${seller ? Utils.escapeHtml(seller.name) : 'Unknown'}</span>
+                    <span class="verification-badge ${vLevel.class}">${vLevel.level}</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;margin-top:1rem">
+                  <button class="btn btn-sm btn-secondary" onclick="messageSeller('${item.sellerId}', '${item.id}')">💬 Message</button>
+                  <button class="btn btn-sm btn-primary" onclick="buyItem('${item.id}')">Buy Now</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      let pagHtml = '';
+      if (totalPages > 1) {
+        pagHtml += `<button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">←</button>`;
+        for (let i = 1; i <= totalPages; i++) pagHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        pagHtml += `<button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">→</button>`;
+      }
+      document.getElementById('itemsPagination').innerHTML = pagHtml;
+    }
+
+    function changePage(p) { currentPage = p; renderItems(); }
+
+    document.querySelectorAll('.filter-chip[data-cat]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip[data-cat]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentPage = 1;
+        renderItems();
+      });
+    });
+    document.getElementById('itemSearch').addEventListener('input', () => { currentPage = 1; renderItems(); });
+
+    function toggleSaveItem(id, btn) {
+      const saved = Saved.toggle('item', id);
+      btn.classList.toggle('saved', saved);
+      Toast.show('success', saved ? 'Saved!' : 'Removed', saved ? 'Item added to your saved list.' : 'Item removed from saved list.');
+    }
+
+    function buyItem(itemId) {
+      const item = Marketplace.getItem(itemId);
+      if (!item) return;
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Confirm Purchase</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <p style="margin-bottom:1rem">You are about to purchase:</p>
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-body">
+                <h4>${Utils.escapeHtml(item.title)}</h4>
+                <p class="text-secondary">${Utils.escapeHtml(item.description || '')}</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem">
+                  <span class="text-muted">Price</span>
+                  <span class="text-lg font-bold text-accent">${Utils.formatMoney(item.price)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+                  <span class="text-muted">Platform Fee (5%)</span>
+                  <span class="text-sm">${Utils.formatMoney(item.price * 0.05)}</span>
+                </div>
+                <div class="divider"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span class="font-semibold">Total</span>
+                  <span class="text-xl font-bold text-accent">${Utils.formatMoney(item.price)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+                  <span class="text-muted">Your Balance</span>
+                  <span class="text-sm">${Utils.formatMoney(user.walletBalance || 0)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmBuy('${itemId}')">Confirm Purchase</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmBuy(itemId) {
+      const result = Marketplace.buyItem(itemId);
+      if (result.success) {
+        Toast.show('success', 'Purchase Complete!', 'Item has been purchased successfully.');
+        document.querySelector('.modal-overlay')?.remove();
+        renderItems();
+        renderMyListings();
+        UI.renderNav();
+      } else {
+        Toast.show('error', 'Purchase Failed', result.message);
+      }
+    }
+
+    function messageSeller(sellerId, itemId) {
+      window.location.href = `messages.html?to=${sellerId}&item=${itemId}`;
+    }
+
+    // Sell form
+    document.getElementById('sellForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const item = Marketplace.createItem({
+        title: document.getElementById('itemTitle').value,
+        category: document.getElementById('itemCategory').value,
+        price: document.getElementById('itemPrice').value,
+        description: document.getElementById('itemDescription').value,
+        condition: document.getElementById('itemCondition').value,
+        location: document.getElementById('itemLocation').value
+      });
+      if (item) {
+        Toast.show('success', 'Item Listed!', 'Your item is now live on the marketplace.');
+        this.reset();
+        renderItems();
+        renderMyListings();
+      }
+    });
+
+    // My listings
+    function renderMyListings() {
+      const items = Marketplace.getMyItems(user.id);
+      const container = document.getElementById('myListings');
+      if (items.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><h3>No Listings</h3><p>Switch to "Sell an Item" to list your first product.</p></div>`;
+      } else {
+        container.innerHTML = items.map(item => `
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(6,182,212,0.15);color:var(--accent);font-size:1.25rem">${catIcons[item.category] || '📦'}</div>
+            <div class="activity-content">
+              <p><strong>${Utils.escapeHtml(item.title)}</strong></p>
+              <div class="time">${catLabels[item.category] || item.category} • ${item.condition} • ${Utils.formatMoney(item.price)}</div>
+            </div>
+            <span class="tag ${item.status === 'available' ? 'tag-success' : 'tag-muted'}">${item.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    renderItems();
+    renderMyListings();
+  </script>
+</body>
+</html>

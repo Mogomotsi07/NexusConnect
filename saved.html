@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Items - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>🔖 Saved Items</h1>
+        <p>Your personal wishlist of rides, items, and services.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="all">All Saved</button>
+        <button class="tab" data-tab="rides">🚗 Rides</button>
+        <button class="tab" data-tab="items">🛒 Items</button>
+        <button class="tab" data-tab="services">🛠️ Services</button>
+      </div>
+
+      <div class="tab-content active" id="allTab">
+        <div id="savedAll"></div>
+      </div>
+      <div class="tab-content" id="ridesTab">
+        <div id="savedRides"></div>
+      </div>
+      <div class="tab-content" id="itemsTab">
+        <div id="savedItems"></div>
+      </div>
+      <div class="tab-content" id="servicesTab">
+        <div id="savedServices"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+      });
+    });
+
+    function renderSaved() {
+      const saved = Saved.getSaved(user.id);
+      const allRides = Rides.getAll();
+      const allItems = Storage.get(KEYS.ITEMS) || [];
+      const allServices = Services.getAll();
+
+      const rides = saved.filter(s => s.type === 'ride').map(s => {
+        const ride = allRides.find(r => r.id === s.itemId);
+        if (!ride) return null;
+        return { type: 'ride', data: ride };
+      }).filter(Boolean);
+
+      const items = saved.filter(s => s.type === 'item').map(s => {
+        const item = allItems.find(i => i.id === s.itemId);
+        if (!item) return null;
+        return { type: 'item', data: item };
+      }).filter(Boolean);
+
+      const services = saved.filter(s => s.type === 'service').map(s => {
+        const service = allServices.find(sv => sv.id === s.itemId);
+        if (!service) return null;
+        return { type: 'service', data: service };
+      }).filter(Boolean);
+
+      const all = [...rides, ...items, ...services];
+
+      // All tab
+      const allContainer = document.getElementById('savedAll');
+      if (all.length === 0) {
+        allContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔖</div><h3>No Saved Items</h3><p>Browse rides, marketplace, and services, then click the ♥ to save items here.</p></div>`;
+      } else {
+        allContainer.innerHTML = all.map(s => renderSavedCard(s)).join('');
+      }
+
+      // Rides tab
+      const ridesContainer = document.getElementById('savedRides');
+      if (rides.length === 0) {
+        ridesContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🚗</div><h3>No Saved Rides</h3><p>Save rides from the Rides page to see them here.</p></div>`;
+      } else {
+        ridesContainer.innerHTML = rides.map(s => renderSavedCard(s)).join('');
+      }
+
+      // Items tab
+      const itemsContainer = document.getElementById('savedItems');
+      if (items.length === 0) {
+        itemsContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🛒</div><h3>No Saved Items</h3><p>Save items from the Marketplace to see them here.</p></div>`;
+      } else {
+        itemsContainer.innerHTML = items.map(s => renderSavedCard(s)).join('');
+      }
+
+      // Services tab
+      const servicesContainer = document.getElementById('savedServices');
+      if (services.length === 0) {
+        servicesContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🛠️</div><h3>No Saved Services</h3><p>Save services from the Services page to see them here.</p></div>`;
+      } else {
+        servicesContainer.innerHTML = services.map(s => renderSavedCard(s)).join('');
+      }
+    }
+
+    function renderSavedCard(s) {
+      if (s.type === 'ride') {
+        const ride = s.data;
+        return `
+          <div class="ride-card mb-4">
+            <div class="ride-header">
+              <div class="ride-route">${Utils.escapeHtml(ride.from)} → ${Utils.escapeHtml(ride.to)}</div>
+              <button class="btn btn-sm btn-danger" onclick="unsave('ride', '${ride.id}')">♥ Unsave</button>
+            </div>
+            <div class="ride-body">
+              <div class="ride-details">
+                <div class="ride-detail">📅 ${Utils.formatDate(ride.date)} at ${ride.time}</div>
+                <div class="ride-detail">👥 ${ride.availableSeats} seats left</div>
+                <div class="ride-detail">💰 ${Utils.formatMoney(ride.price)}/seat</div>
+              </div>
+            </div>
+            <div class="ride-footer">
+              <a href="rides.html" class="btn btn-sm btn-primary">View in Rides</a>
+            </div>
+          </div>
+        `;
+      }
+      if (s.type === 'item') {
+        const item = s.data;
+        const catIcons = { textbooks: '📚', electronics: '💻', clothing: '👕', furniture: '🪑', other: '📦' };
+        return `
+          <div class="item-card mb-4">
+            <div class="item-image" style="height:120px">
+              <span style="font-size:2rem">${catIcons[item.category] || '📦'}</span>
+              <button class="save-btn saved" style="position:absolute;top:0.5rem;right:0.5rem" onclick="unsave('item', '${item.id}')">♥</button>
+            </div>
+            <div class="item-info">
+              <h4>${Utils.escapeHtml(item.title)}</h4>
+              <div class="item-meta">
+                <div class="item-price">${Utils.formatMoney(item.price)}</div>
+                <span class="tag tag-success">${item.condition}</span>
+              </div>
+              <a href="marketplace.html" class="btn btn-sm btn-primary mt-2">View in Marketplace</a>
+            </div>
+          </div>
+        `;
+      }
+      if (s.type === 'service') {
+        const service = s.data;
+        return `
+          <div class="service-card mb-4">
+            <div class="service-header">
+              <div class="service-avatar">${Utils.initials(service.providerName)}</div>
+              <div class="service-provider-info">
+                <h4>${Utils.escapeHtml(service.title)}</h4>
+                <div class="category">${service.category}</div>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="unsave('service', '${service.id}')">♥ Unsave</button>
+            </div>
+            <div class="service-body">
+              <p>${Utils.escapeHtml(service.description || '')}</p>
+            </div>
+            <div class="service-footer">
+              <div class="service-rate">${Utils.formatMoney(service.price)}<span>/hour</span></div>
+              <a href="services.html" class="btn btn-sm btn-primary">View in Services</a>
+            </div>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function unsave(type, id) {
+      Saved.toggle(type, id);
+      Toast.show('success', 'Removed', 'Item removed from saved list.');
+      renderSaved();
+    }
+
+    renderSaved();
+  </script>
+</body>
+</html>

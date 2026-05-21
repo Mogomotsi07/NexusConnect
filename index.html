@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusConnect - Community Marketplace for Gaborone</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;padding:3rem 0;text-align:center}
+    .hero-stat-number{font-size:2.5rem;font-weight:800;color:var(--accent);line-height:1}
+    .hero-stat-label{font-size:0.875rem;color:var(--text-muted);margin-top:0.5rem}
+    .step-card{display:flex;gap:1.5rem;align-items:flex-start}
+    .step-number{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.25rem;color:white;flex-shrink:0}
+    .testimonial-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem}
+    .testimonial-text{font-size:1rem;color:var(--text-secondary);font-style:italic;margin-bottom:1.5rem;line-height:1.7}
+    .testimonial-author{display:flex;align-items:center;gap:1rem}
+    .testimonial-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+    .testimonial-name{font-weight:600}
+    .testimonial-role{font-size:0.8125rem;color:var(--text-muted)}
+    @media(max-width:768px){
+      .hero h1{font-size:2rem}
+      .hero-stats{grid-template-columns:repeat(2,1fr)}
+      .hero-stat-number{font-size:1.75rem}
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">N</div>
+        NexusConnect
+      </a>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#testimonials" class="nav-link">Testimonials</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="signup.html" class="btn btn-primary btn-sm">Get Started</a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how-it-works" class="nav-link">How It Works</a>
+    <a href="#testimonials" class="nav-link">Testimonials</a>
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <a href="login.html" class="btn btn-outline btn-block mb-2">Log In</a>
+      <a href="signup.html" class="btn btn-primary btn-block">Get Started</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content animate-slide-up">
+        <h1>The Community Marketplace for Gaborone</h1>
+        <p>Connect, share, and trade with students & professionals. Rides, marketplace, services, and deliveries — all in one trusted platform.</p>
+        <div class="hero-buttons">
+          <a href="signup.html" class="btn btn-primary btn-lg">Join NexusConnect</a>
+          <a href="#features" class="btn btn-secondary btn-lg">Explore Features</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-number">2,500+</div>
+          <div class="hero-stat-label">Active Users</div>
+        </div>
+        <div>
+          <div class="hero-stat-number">1,200+</div>
+          <div class="hero-stat-label">Rides Shared</div>
+        </div>
+        <div>
+          <div class="hero-stat-number">800+</div>
+          <div class="hero-stat-label">Items Sold</div>
+        </div>
+        <div>
+          <div class="hero-stat-number">P150K+</div>
+          <div class="hero-stat-label">Transactions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-16" id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Everything You Need</h2>
+        <p>One platform for all your community needs — built for Gaborone's students and professionals.</p>
+      </div>
+      <div class="card-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚗</div>
+          <h3>Ride Sharing</h3>
+          <p>Offer or find rides across Gaborone. Split fuel costs, meet new people, and travel sustainably.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛒</div>
+          <h3>Marketplace</h3>
+          <p>Buy and sell textbooks, electronics, clothing, and furniture with verified buyers and sellers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛠️</div>
+          <h3>Services</h3>
+          <p>Find tutors, designers, repair services, and more. Book with confidence using our deposit system.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Delivery</h3>
+          <p>Request on-demand deliveries across the city. Track your package from pickup to dropoff.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Digital Wallet</h3>
+          <p>Secure in-app payments for all transactions. Top up easily and track every Pula.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Messaging</h3>
+          <p>Chat directly with buyers, sellers, drivers, and service providers. Stay connected.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-16" id="how-it-works" style="background:var(--bg-secondary)">
+    <div class="container">
+      <div class="section-title">
+        <h2>How It Works</h2>
+        <p>Getting started is simple. Join the community in three easy steps.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div>
+            <h4 class="mb-2">Create Your Account</h4>
+            <p class="text-secondary">Sign up with your email, verify your profile, and get your unique referral code instantly.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div>
+            <h4 class="mb-2">Explore & Connect</h4>
+            <p class="text-secondary">Browse rides, items, and services. Use smart filters to find exactly what you need.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div>
+            <h4 class="mb-2">Transact Safely</h4>
+            <p class="text-secondary">Use your digital wallet for secure payments. Rate and review to build trust.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-16" id="testimonials">
+    <div class="container">
+      <div class="section-title">
+        <h2>What Our Community Says</h2>
+        <p>Real stories from real users across Gaborone.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="testimonial-card">
+          <div class="testimonial-text">"NexusConnect helped me sell my old textbooks within 2 days! The wallet system makes payments so smooth."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">TK</div>
+            <div>
+              <div class="testimonial-name">Thabo Kgosi</div>
+              <div class="testimonial-role">Student, UB</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-text">"I offer rides to campus every morning. I've saved so much on fuel and made great friends along the way."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">LM</div>
+            <div>
+              <div class="testimonial-name">Lebogang Molefe</div>
+              <div class="testimonial-role">Professional, CBD</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-text">"Found an amazing tutor for my statistics course through the services section. The verification badges give real peace of mind."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">OR</div>
+            <div>
+              <div class="testimonial-name">Onneile Ramotswa</div>
+              <div class="testimonial-role">Student, BAC</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <div class="container">
+        <h2 class="mb-4">Ready to Join the Community?</h2>
+        <p class="text-secondary mb-6" style="max-width:500px;margin:0 auto 2rem">Start sharing, buying, selling, and connecting with thousands of students and professionals in Gaborone today.</p>
+        <a href="signup.html" class="btn btn-primary btn-lg">Create Free Account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">Nexus<span>Connect</span></div>
+          <p class="text-muted" style="font-size:0.875rem">The trusted community marketplace for Gaborone. Built for students, by students.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <a href="rides.html">Ride Sharing</a>
+          <a href="marketplace.html">Marketplace</a>
+          <a href="services.html">Services</a>
+          <a href="deliveries.html">Deliveries</a>
+        </div>
+        <div class="footer-links">
+          <h4>Account</h4>
+          <a href="login.html">Log In</a>
+          <a href="signup.html">Sign Up</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="profile.html">Profile</a>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Safety</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p> NexusConnect. All rights reserved. Made with love in Gaborone, Botswana.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Mobile menu
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('show');
+    });
+  </script>
+</body>
+</html>

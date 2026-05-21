@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .welcome-banner{background:linear-gradient(135deg,var(--primary-light),var(--primary));border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem;position:relative;overflow:hidden}
+    .welcome-banner::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,212,0.1) 0%,transparent 70%);border-radius:50%}
+    .welcome-banner h2{position:relative;z-index:1;margin-bottom:0.5rem}
+    .welcome-banner p{position:relative;z-index:1;color:var(--text-secondary)}
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+    .section-header h3{font-size:1.25rem}
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo">
+        <div class="logo-icon">N</div>
+        NexusConnect
+      </a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages" title="Messages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications" title="Notifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header">
+              <div class="name" id="userMenuName">User</div>
+              <div class="email" id="userMenuEmail">user@example.com</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout(); return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link active">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Welcome Banner -->
+      <div class="welcome-banner mt-6" id="welcomeBanner">
+        <h2 id="welcomeName">Welcome back!</h2>
+        <p>Here's what's happening in your NexusConnect community.</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="section-header">
+        <h3>Quick Actions</h3>
+      </div>
+      <div class="dashboard-grid">
+        <a href="rides.html?action=offer" class="quick-action" style="text-decoration:none;color:inherit">
+          <div class="quick-action-icon" style="background:rgba(6,182,212,0.15);color:var(--accent)">🚗</div>
+          <div class="quick-action-info">
+            <h4>Offer a Ride</h4>
+            <p>Share your journey and earn</p>
+          </div>
+        </a>
+        <a href="marketplace.html?action=sell" class="quick-action" style="text-decoration:none;color:inherit">
+          <div class="quick-action-icon" style="background:rgba(16,185,129,0.15);color:var(--success)">🛒</div>
+          <div class="quick-action-info">
+            <h4>Sell an Item</h4>
+            <p>List textbooks, electronics & more</p>
+          </div>
+        </a>
+        <a href="services.html?action=offer" class="quick-action" style="text-decoration:none;color:inherit">
+          <div class="quick-action-icon" style="background:rgba(245,158,11,0.15);color:var(--warning)">🛠️</div>
+          <div class="quick-action-info">
+            <h4>Offer a Service</h4>
+            <p>Tutoring, design, repair & more</p>
+          </div>
+        </a>
+        <a href="deliveries.html?action=request" class="quick-action" style="text-decoration:none;color:inherit">
+          <div class="quick-action-icon" style="background:rgba(139,92,246,0.15);color:#8b5cf6">📦</div>
+          <div class="quick-action-info">
+            <h4>Request Delivery</h4>
+            <p>Send or receive packages</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="stat-card">
+          <div class="stat-value" id="statRides">0</div>
+          <div class="stat-label">My Rides</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statItems">0</div>
+          <div class="stat-label">My Listings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statServices">0</div>
+          <div class="stat-label">My Services</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statMessages">0</div>
+          <div class="stat-label">Unread Messages</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="section-header">
+        <h3>Recent Activity</h3>
+        <a href="notifications.html" class="text-sm text-accent">View All</a>
+      </div>
+      <div class="card">
+        <div class="card-body" id="activityList">
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No Activity Yet</h3>
+            <p>Start exploring rides, marketplace, and services to see activity here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Auth check
+    const user = Auth.getCurrentUser();
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+
+    // Welcome banner
+    if (user) {
+      document.getElementById('welcomeName').textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
+
+      // Stats
+      const myRides = Rides.getMyRides(user.id).length;
+      const myItems = Marketplace.getMyItems(user.id).length;
+      const myServices = Services.getMyServices(user.id).length;
+      const unreadMsgs = Auth.getUnreadMessages();
+
+      document.getElementById('statRides').textContent = myRides;
+      document.getElementById('statItems').textContent = myItems;
+      document.getElementById('statServices').textContent = myServices;
+      document.getElementById('statMessages').textContent = unreadMsgs;
+
+      // Recent notifications
+      const notifications = (Storage.get(KEYS.NOTIFICATIONS) || [])
+        .filter(n => n.userId === user.id)
+        .slice(0, 5);
+
+      const activityList = document.getElementById('activityList');
+      if (notifications.length > 0) {
+        activityList.innerHTML = notifications.map(n => {
+          const icons = { purchase: '💰', ride: '🚗', message: '💬', referral: '🎁', system: '🔔' };
+          return `
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(6,182,212,0.15);color:var(--accent)">${icons[n.type] || '🔔'}</div>
+              <div class="activity-content">
+                <p>${Utils.escapeHtml(n.message)}</p>
+                <div class="time">${Utils.timeAgo(n.createdAt)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  </script>
+</body>
+</html>

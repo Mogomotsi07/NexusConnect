@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .service-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem}
+    .service-tab{padding:0.625rem 1.25rem;border-radius:var(--radius-sm);font-size:0.875rem;font-weight:500;cursor:pointer;transition:var(--transition);background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary)}
+    .service-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+    .service-tab:hover:not(.active){border-color:var(--border-light);color:var(--text-primary)}
+    .tab-panel{display:none}.tab-panel.active{display:block}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link active">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>🛠️ Professional Services</h1>
+        <p>Find tutors, designers, repair services, and more. Book with confidence.</p>
+      </div>
+
+      <div class="service-tabs">
+        <button class="service-tab active" data-tab="find">Find Services</button>
+        <button class="service-tab" data-tab="offer">Offer a Service</button>
+        <button class="service-tab" data-tab="my">My Services</button>
+      </div>
+
+      <!-- FIND -->
+      <div class="tab-panel active" id="findPanel">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input" id="serviceSearch" placeholder="Search services...">
+        </div>
+        <div class="filter-bar">
+          <button class="filter-chip active" data-cat="all">All</button>
+          <button class="filter-chip" data-cat="tutoring">📚 Tutoring</button>
+          <button class="filter-chip" data-cat="printing">🖨️ Printing</button>
+          <button class="filter-chip" data-cat="design">🎨 Design</button>
+          <button class="filter-chip" data-cat="repair">🔧 Repair</button>
+          <button class="filter-chip" data-cat="other">📦 Other</button>
+        </div>
+        <div class="card-grid" id="servicesGrid"></div>
+      </div>
+
+      <!-- OFFER -->
+      <div class="tab-panel" id="offerPanel">
+        <div class="card">
+          <div class="card-header"><h3>✨ Offer a Service</h3></div>
+          <div class="card-body">
+            <form id="offerServiceForm">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label class="form-label">Service Title <span class="required">*</span></label>
+                  <input type="text" class="form-input" id="serviceTitle" placeholder="e.g. Math Tutoring - All Levels" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Category <span class="required">*</span></label>
+                  <select class="form-select" id="serviceCategory" required>
+                    <option value="">Select category</option>
+                    <option value="tutoring">📚 Tutoring</option>
+                    <option value="printing">🖨️ Printing</option>
+                    <option value="design">🎨 Design</option>
+                    <option value="repair">🔧 Repair</option>
+                    <option value="other">📦 Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price per Hour (P) <span class="required">*</span></label>
+                  <input type="number" class="form-input" id="servicePrice" min="1" step="0.01" placeholder="e.g. 50" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Availability</label>
+                  <input type="text" class="form-input" id="serviceAvailability" placeholder="e.g. Mon-Fri, 4PM-8PM">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="serviceDescription" placeholder="Describe your service, experience, and what clients can expect..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Post Service</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY SERVICES -->
+      <div class="tab-panel" id="myPanel">
+        <div class="card">
+          <div class="card-header"><h3>📋 My Services</h3></div>
+          <div class="card-body" id="myServicesList"></div>
+        </div>
+        <div class="card mt-6">
+          <div class="card-header"><h3>📥 Bookings</h3></div>
+          <div class="card-body" id="myBookings"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.querySelectorAll('.service-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+      });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'offer') document.querySelector('[data-tab="offer"]').click();
+
+    const catIcons = { tutoring: '📚', printing: '🖨️', design: '🎨', repair: '🔧', other: '📦' };
+    const catLabels = { tutoring: 'Tutoring', printing: 'Printing', design: 'Design', repair: 'Repair', other: 'Other' };
+
+    function renderServices() {
+      const all = Services.getAll();
+      const cat = document.querySelector('.filter-chip.active')?.dataset.cat || 'all';
+      const search = document.getElementById('serviceSearch').value.toLowerCase();
+
+      let filtered = all.filter(s => s.providerId !== user.id);
+      if (cat !== 'all') filtered = filtered.filter(s => s.category === cat);
+      if (search) filtered = filtered.filter(s => s.title.toLowerCase().includes(search) || s.description.toLowerCase().includes(search));
+
+      const grid = document.getElementById('servicesGrid');
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🛠️</div><h3>No Services Found</h3><p>Try different filters or search terms.</p></div>`;
+      } else {
+        grid.innerHTML = filtered.map(s => {
+          const users = Storage.get(KEYS.USERS) || [];
+          const provider = users.find(u => u.id === s.providerId);
+          const vLevel = provider ? Utils.getVerificationLevel(provider) : { level: 'Bronze', class: 'bronze' };
+          const avgRating = Reviews.getAverage(s.providerId);
+          const saved = Saved.isSaved('service', s.id);
+          return `
+            <div class="service-card">
+              <div class="service-header">
+                <div class="service-avatar">${provider ? Utils.initials(provider.name) : '?'}</div>
+                <div class="service-provider-info">
+                  <h4>${Utils.escapeHtml(s.title)}</h4>
+                  <div class="category">${catLabels[s.category] || s.category}</div>
+                  <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.25rem">
+                    <span class="verification-badge ${vLevel.class}">${vLevel.level}</span>
+                    ${avgRating > 0 ? `<span class="text-sm text-warning">⭐ ${avgRating}</span>` : ''}
+                  </div>
+                </div>
+                <button class="save-btn ${saved ? 'saved' : ''}" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.25rem" onclick="toggleSaveService('${s.id}', this)">♥</button>
+              </div>
+              <div class="service-body">
+                <p>${Utils.escapeHtml(s.description || '')}</p>
+                <div class="service-tags">
+                  ${(s.availability || []).map(a => `<span class="tag tag-muted">${a}</span>`).join('')}
+                  <span class="tag tag-accent">${provider ? Utils.escapeHtml(provider.institution || 'Gaborone') : ''}</span>
+                </div>
+              </div>
+              <div class="service-footer">
+                <div class="service-rate">${Utils.formatMoney(s.price)}<span>/hour</span></div>
+                <div style="display:flex;gap:0.5rem">
+                  <button class="btn btn-sm btn-secondary" onclick="messageProvider('${s.providerId}', '${s.id}')">💬 Message</button>
+                  <button class="btn btn-sm btn-primary" onclick="bookService('${s.id}')">Book Now</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    document.querySelectorAll('.filter-chip[data-cat]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip[data-cat]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        renderServices();
+      });
+    });
+    document.getElementById('serviceSearch').addEventListener('input', renderServices);
+
+    function toggleSaveService(id, btn) {
+      const saved = Saved.toggle('service', id);
+      btn.classList.toggle('saved', saved);
+      Toast.show('success', saved ? 'Saved!' : 'Removed', saved ? 'Service added to saved list.' : 'Service removed from saved list.');
+    }
+
+    function bookService(serviceId) {
+      const service = Services.getAll().find(s => s.id === serviceId);
+      if (!service) return;
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Book Service</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <div class="card" style="margin-bottom:1rem">
+              <div class="card-body">
+                <h4>${Utils.escapeHtml(service.title)}</h4>
+                <p class="text-secondary">${Utils.escapeHtml(service.description || '')}</p>
+                <div style="display:flex;justify-content:space-between;margin-top:1rem">
+                  <span class="text-muted">Rate</span>
+                  <span class="font-bold text-accent">${Utils.formatMoney(service.price)}/hour</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hours Needed</label>
+              <input type="number" class="form-input" id="bookHours" min="1" max="40" value="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Deposit Required (20%)</label>
+              <div class="form-input" style="background:var(--bg-hover);font-weight:600;color:var(--accent)" id="depositAmount">${Utils.formatMoney(service.price * 0.2)}</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Your Balance</label>
+              <div class="form-input" style="background:var(--bg-hover)">${Utils.formatMoney(user.walletBalance || 0)}</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmBook('${serviceId}')">Confirm Booking</button>
+          </div>
+        </div>
+      `);
+      document.getElementById('bookHours').addEventListener('input', function() {
+        document.getElementById('depositAmount').textContent = Utils.formatMoney(service.price * this.value * 0.2);
+      });
+    }
+
+    function confirmBook(serviceId) {
+      const hours = parseInt(document.getElementById('bookHours').value) || 1;
+      const result = Services.bookService(serviceId, hours);
+      if (result.success) {
+        Toast.show('success', 'Booked!', 'Service booked successfully. 20% deposit paid.');
+        document.querySelector('.modal-overlay')?.remove();
+        renderMyServices();
+        UI.renderNav();
+      } else {
+        Toast.show('error', 'Booking Failed', result.message);
+      }
+    }
+
+    function messageProvider(providerId, serviceId) {
+      window.location.href = `messages.html?to=${providerId}&service=${serviceId}`;
+    }
+
+    // Offer form
+    document.getElementById('offerServiceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const service = Services.create({
+        title: document.getElementById('serviceTitle').value,
+        category: document.getElementById('serviceCategory').value,
+        price: document.getElementById('servicePrice').value,
+        description: document.getElementById('serviceDescription').value,
+        availability: document.getElementById('serviceAvailability').value.split(',').map(s => s.trim()).filter(s => s)
+      });
+      if (service) {
+        Toast.show('success', 'Service Posted!', 'Your service is now live.');
+        this.reset();
+        renderServices();
+        renderMyServices();
+      }
+    });
+
+    // My services & bookings
+    function renderMyServices() {
+      const myServices = Services.getMyServices(user.id);
+      const container = document.getElementById('myServicesList');
+      if (myServices.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🛠️</div><h3>No Services</h3><p>Switch to "Offer a Service" to post your first service.</p></div>`;
+      } else {
+        container.innerHTML = myServices.map(s => `
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(245,158,11,0.15);color:var(--warning);font-size:1.25rem">${catIcons[s.category] || '📦'}</div>
+            <div class="activity-content">
+              <p><strong>${Utils.escapeHtml(s.title)}</strong></p>
+              <div class="time">${catLabels[s.category] || s.category} • ${Utils.formatMoney(s.price)}/hour</div>
+            </div>
+            <span class="tag ${s.status === 'active' ? 'tag-success' : 'tag-muted'}">${s.status}</span>
+          </div>
+        `).join('');
+      }
+
+      // Bookings
+      const bookings = (Storage.get(KEYS.DELIVERIES) || []).filter(b => b.type === 'service' && (b.providerId === user.id || b.clientId === user.id));
+      const bookContainer = document.getElementById('myBookings');
+      if (bookings.length === 0) {
+        bookContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><h3>No Bookings</h3><p>Your service bookings will appear here.</p></div>`;
+      } else {
+        bookContainer.innerHTML = bookings.map(b => `
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(6,182,212,0.15);color:var(--accent)">📋</div>
+            <div class="activity-content">
+              <p><strong>${Utils.escapeHtml(b.serviceTitle)}</strong> — ${b.hours}h</p>
+              <div class="time">${b.providerId === user.id ? 'Client: ' + Utils.escapeHtml(b.clientName) : 'Provider: ' + Utils.escapeHtml(b.providerName)} • Deposit: ${Utils.formatMoney(b.deposit)}</div>
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+              <span class="tag ${b.status === 'booked' ? 'tag-warning' : b.status === 'completed' ? 'tag-success' : 'tag-muted'}">${b.status}</span>
+              ${b.providerId === user.id && b.status === 'booked' ? `<button class="btn btn-sm btn-success" onclick="completeBooking('${b.id}')">✓ Complete</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function completeBooking(id) {
+      Services.completeBooking(id);
+      Toast.show('success', 'Completed', 'Service marked as completed! Payment released.');
+      renderMyServices();
+      UI.renderNav();
+    }
+
+    renderServices();
+    renderMyServices();
+  </script>
+</body>
+</html>

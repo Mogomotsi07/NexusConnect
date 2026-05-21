@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referrals - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>🎁 Referral Program</h1>
+        <p>Invite friends and earn rewards. The more you refer, the more you earn!</p>
+      </div>
+
+      <!-- Referral Code -->
+      <div class="card mb-6">
+        <div class="card-body" style="text-align:center">
+          <h3 class="mb-2">Your Referral Code</h3>
+          <div class="referral-code-box">
+            <div class="code" id="referralCode">NEX******</div>
+            <div class="label">Share this code with friends</div>
+          </div>
+          <div class="share-buttons">
+            <button class="share-btn" onclick="shareWhatsApp()" title="WhatsApp">📱</button>
+            <button class="share-btn" onclick="shareFacebook()" title="Facebook">📘</button>
+            <button class="share-btn" onclick="shareTwitter()" title="Twitter">🐦</button>
+            <button class="share-btn" onclick="shareEmail()" title="Email">📧</button>
+            <button class="share-btn" onclick="copyCode()" title="Copy">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="stat-card">
+          <div class="stat-value" id="refCount">0</div>
+          <div class="stat-label">Total Referrals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="refEarnings">P0</div>
+          <div class="stat-label">Total Earnings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="refPending">0</div>
+          <div class="stat-label">Pending Rewards</div>
+        </div>
+      </div>
+
+      <!-- Tiers -->
+      <div class="card mb-6">
+        <div class="card-header"><h3>🏆 Reward Tiers</h3></div>
+        <div class="card-body">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="tier-card" id="tierBronze">
+              <div class="tier-name">🥉 Bronze</div>
+              <div class="tier-reward">P50</div>
+              <div class="tier-requirement">Per referral after first transaction</div>
+            </div>
+            <div class="tier-card" id="tierSilver">
+              <div class="tier-name">🥈 Silver</div>
+              <div class="tier-reward">P75</div>
+              <div class="tier-requirement">Per referral + P100 bonus at 6 referrals</div>
+            </div>
+            <div class="tier-card" id="tierGold">
+              <div class="tier-name">🥇 Gold</div>
+              <div class="tier-reward">P100</div>
+              <div class="tier-requirement">Per referral + P500 bonus at 16 referrals</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="card">
+        <div class="card-header"><h3>📖 How It Works</h3></div>
+        <div class="card-body">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div style="text-align:center">
+              <div style="width:60px;height:60px;background:var(--bg-hover);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">1</div>
+              <h4 class="mb-2">Share Your Code</h4>
+              <p class="text-secondary text-sm">Copy your unique referral code and share it with friends via WhatsApp, social media, or email.</p>
+            </div>
+            <div style="text-align:center">
+              <div style="width:60px;height:60px;background:var(--bg-hover);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">2</div>
+              <h4 class="mb-2">They Sign Up</h4>
+              <p class="text-secondary text-sm">Your friend creates an account using your referral code during registration.</p>
+            </div>
+            <div style="text-align:center">
+              <div style="width:60px;height:60px;background:var(--bg-hover);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">3</div>
+              <h4 class="mb-2">You Earn</h4>
+              <p class="text-secondary text-sm">Once they complete their first transaction, you earn P50 automatically!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.getElementById('referralCode').textContent = user.referralCode;
+    document.getElementById('refCount').textContent = user.referralCount || 0;
+    document.getElementById('refEarnings').textContent = Utils.formatMoney(user.referralEarnings || 0);
+    document.getElementById('refPending').textContent = (user.referralCount || 0) - (user.referralEarnings ? Math.floor(user.referralEarnings / 50) : 0);
+
+    // Highlight current tier
+    const count = user.referralCount || 0;
+    if (count >= 16) document.getElementById('tierGold').classList.add('current');
+    else if (count >= 6) document.getElementById('tierSilver').classList.add('current');
+    else document.getElementById('tierBronze').classList.add('current');
+
+    function shareWhatsApp() {
+      const text = `Join me on NexusConnect - the community marketplace for Gaborone! Use my code ${user.referralCode} to sign up and get started. https://nexusconnect.bw`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+    function shareFacebook() {
+      const text = `Join NexusConnect - Gaborone's community marketplace! Use code ${user.referralCode}`;
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://nexusconnect.bw')}&quote=${encodeURIComponent(text)}`, '_blank');
+    }
+    function shareTwitter() {
+      const text = `Join me on @NexusConnectBW - the community marketplace for Gaborone students & professionals! Use my code ${user.referralCode}`;
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    }
+    function shareEmail() {
+      const subject = 'Join NexusConnect - Community Marketplace for Gaborone';
+      const body = `Hi!\n\nI thought you'd love NexusConnect - a community marketplace for Gaborone where you can share rides, buy/sell items, find services, and more.\n\nUse my referral code: ${user.referralCode}\n\nSign up at: https://nexusconnect.bw\n\nCheers!`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+    function copyCode() {
+      navigator.clipboard.writeText(user.referralCode).then(() => {
+        Toast.show('success', 'Copied!', 'Referral code copied to clipboard.');
+      });
+    }
+  </script>
+</body>
+</html>

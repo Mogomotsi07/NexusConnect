@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .wallet-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem}
+    .wallet-tab{padding:0.625rem 1.25rem;border-radius:var(--radius-sm);font-size:0.875rem;font-weight:500;cursor:pointer;transition:var(--transition);background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary)}
+    .wallet-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+    .wallet-tab:hover:not(.active){border-color:var(--border-light);color:var(--text-primary)}
+    .tab-panel{display:none}.tab-panel.active{display:block}
+    .payment-card{background:linear-gradient(135deg,#1e293b,#0f172a);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;position:relative;overflow:hidden;margin-bottom:1rem}
+    .payment-card::before{content:'';position:absolute;top:-30%;right:-20%;width:150px;height:150px;background:radial-gradient(circle,rgba(6,182,212,0.1) 0%,transparent 70%);border-radius:50%}
+    .card-chip{width:40px;height:30px;background:linear-gradient(135deg,#d4af37,#c5a028);border-radius:6px;margin-bottom:1rem}
+    .card-number{font-family:'Courier New',monospace;font-size:1.125rem;letter-spacing:2px;color:var(--text-primary);margin-bottom:1rem}
+    .card-meta{display:flex;justify-content:space-between;font-size:0.8125rem;color:var(--text-muted)}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link active">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>💰 Digital Wallet</h1>
+        <p>Manage your balance, top up, and view transaction history.</p>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="wallet-balance-card mb-6">
+        <div class="label">Available Balance</div>
+        <div class="balance" id="walletBalance">P0.00</div>
+        <div class="pending" id="pendingBalance">Pending: P0.00</div>
+        <div class="wallet-actions">
+          <button class="btn btn-primary" onclick="showTopUp()">⬆️ Top Up</button>
+          <button class="btn btn-secondary" onclick="showWithdraw()">⬇️ Withdraw</button>
+          <button class="btn btn-secondary" onclick="showTransfer()">↔️ Transfer</button>
+        </div>
+      </div>
+
+      <div class="wallet-tabs">
+        <button class="wallet-tab active" data-tab="history">📜 Transaction History</button>
+        <button class="wallet-tab" data-tab="cards">💳 Payment Methods</button>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="tab-panel active" id="historyPanel">
+        <div class="card">
+          <div class="card-header"><h3>Recent Transactions</h3></div>
+          <div class="card-body" id="transactionList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📜</div>
+              <h3>No Transactions</h3>
+              <p>Your transaction history will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARDS -->
+      <div class="tab-panel" id="cardsPanel">
+        <div class="card">
+          <div class="card-header"><h3>Payment Methods</h3><button class="btn btn-sm btn-outline" onclick="showAddCard()">+ Add Card</button></div>
+          <div class="card-body" id="cardsList">
+            <div class="empty-state">
+              <div class="empty-state-icon">💳</div>
+              <h3>No Cards</h3>
+              <p>Add a payment method for quick top-ups.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.querySelectorAll('.wallet-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.wallet-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+      });
+    });
+
+    function updateBalance() {
+      const currentUser = Auth.getCurrentUser();
+      document.getElementById('walletBalance').textContent = Utils.formatMoney(currentUser?.walletBalance || 0);
+      document.getElementById('pendingBalance').textContent = `Pending: ${Utils.formatMoney(currentUser?.pendingBalance || 0)}`;
+    }
+    updateBalance();
+
+    function showTopUp() {
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Top Up Wallet</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Amount (P)</label>
+              <input type="number" class="form-input" id="topUpAmount" min="10" step="1" placeholder="e.g. 100" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              <select class="form-select" id="topUpMethod">
+                <option value="card">💳 Credit/Debit Card</option>
+                <option value="bank">🏦 Bank Transfer</option>
+                <option value="mobile">📱 Mobile Money</option>
+              </select>
+            </div>
+            <p class="text-sm text-muted">This is a simulated top-up for demonstration purposes.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmTopUp()">Top Up Now</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmTopUp() {
+      const amount = parseFloat(document.getElementById('topUpAmount').value);
+      if (!amount || amount < 10) {
+        Toast.show('error', 'Invalid Amount', 'Minimum top-up is P10.00');
+        return;
+      }
+      Wallet.addFunds(user.id, amount, 'Wallet top-up');
+      Toast.show('success', 'Top Up Successful!', `P${amount.toFixed(2)} added to your wallet.`);
+      document.querySelector('.modal-overlay')?.remove();
+      updateBalance();
+      renderTransactions();
+      UI.renderNav();
+    }
+
+    function showWithdraw() {
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Withdraw Funds</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Amount (P)</label>
+              <input type="number" class="form-input" id="withdrawAmount" min="10" placeholder="e.g. 50" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bank Account / Mobile Number</label>
+              <input type="text" class="form-input" id="withdrawAccount" placeholder="Account details">
+            </div>
+            <p class="text-sm text-muted">Simulated withdrawal for demo purposes.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmWithdraw()">Withdraw</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmWithdraw() {
+      const amount = parseFloat(document.getElementById('withdrawAmount').value);
+      if (!amount || amount < 10) {
+        Toast.show('error', 'Invalid Amount', 'Minimum withdrawal is P10.00');
+        return;
+      }
+      if (!Wallet.deductFunds(user.id, amount, 'Withdrawal')) {
+        Toast.show('error', 'Insufficient Funds', 'You do not have enough balance.');
+        return;
+      }
+      Toast.show('success', 'Withdrawal Initiated!', `P${amount.toFixed(2)} will be processed.`);
+      document.querySelector('.modal-overlay')?.remove();
+      updateBalance();
+      renderTransactions();
+      UI.renderNav();
+    }
+
+    function showTransfer() {
+      const users = Storage.get(KEYS.USERS) || [];
+      const options = users.filter(u => u.id !== user.id).map(u => `<option value="${u.id}">${Utils.escapeHtml(u.name)} (${u.email})</option>`).join('');
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Transfer Funds</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Recipient</label>
+              <select class="form-select" id="transferTo">${options || '<option disabled>No other users</option>'}</select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amount (P)</label>
+              <input type="number" class="form-input" id="transferAmount" min="1" placeholder="e.g. 25" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Note</label>
+              <input type="text" class="form-input" id="transferNote" placeholder="Optional message">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmTransfer()">Send</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmTransfer() {
+      const toId = document.getElementById('transferTo').value;
+      const amount = parseFloat(document.getElementById('transferAmount').value);
+      const note = document.getElementById('transferNote').value;
+      if (!toId || !amount) return;
+      if (!Wallet.deductFunds(user.id, amount, `Transfer: ${note || 'Sent funds'}`)) {
+        Toast.show('error', 'Failed', 'Insufficient balance.');
+        return;
+      }
+      Wallet.addFunds(toId, amount, `Transfer received: ${note || 'Funds'}`);
+      Auth.addNotification(toId, 'system', `${user.name} sent you ${Utils.formatMoney(amount)}`);
+      Toast.show('success', 'Sent!', `${Utils.formatMoney(amount)} transferred successfully.`);
+      document.querySelector('.modal-overlay')?.remove();
+      updateBalance();
+      renderTransactions();
+      UI.renderNav();
+    }
+
+    function renderTransactions() {
+      const transactions = Wallet.getTransactions(user.id);
+      const container = document.getElementById('transactionList');
+      if (transactions.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📜</div><h3>No Transactions</h3><p>Your transaction history will appear here.</p></div>`;
+      } else {
+        container.innerHTML = transactions.map(t => `
+          <div class="transaction-item">
+            <div class="transaction-icon ${t.type}">${t.type === 'income' ? '⬇️' : '⬆️'}</div>
+            <div class="transaction-details">
+              <div class="title">${Utils.escapeHtml(t.description)}</div>
+              <div class="meta">${Utils.formatDateTime(t.createdAt)}</div>
+            </div>
+            <div class="transaction-amount ${t.type}">${t.type === 'income' ? '+' : '-'}${Utils.formatMoney(t.amount)}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderCards() {
+      const cards = Storage.get(KEYS.WALLET_CARDS) || [];
+      const myCards = cards.filter(c => c.userId === user.id);
+      const container = document.getElementById('cardsList');
+      if (myCards.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💳</div><h3>No Cards</h3><p>Add a payment method for quick top-ups.</p></div>`;
+      } else {
+        container.innerHTML = myCards.map(c => `
+          <div class="payment-card">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div>
+                <div class="card-chip"></div>
+                <div class="card-number">**** **** **** ${c.last4}</div>
+                <div class="card-meta">
+                  <span>${Utils.escapeHtml(c.holder)}</span>
+                  <span>Expires ${c.expiry}</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="deleteCard('${c.id}')">Remove</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function showAddCard() {
+      Modal.open(`
+        <div class="modal">
+          <div class="modal-header"><h3>Add Payment Method</h3><button class="modal-close">&times;</button></div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Expiry Date</label>
+                <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-input" id="cardCvv" placeholder="123" maxlength="3">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Card Holder Name</label>
+              <input type="text" class="form-input" id="cardHolder" placeholder="Name on card">
+            </div>
+            <p class="text-sm text-muted">Card details are stored locally for demo purposes only.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-close>Cancel</button>
+            <button class="btn btn-primary" onclick="confirmAddCard()">Add Card</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function confirmAddCard() {
+      const num = document.getElementById('cardNumber').value.replace(/\s/g, '');
+      const expiry = document.getElementById('cardExpiry').value;
+      const holder = document.getElementById('cardHolder').value;
+      if (num.length < 13 || !expiry || !holder) {
+        Toast.show('error', 'Invalid Details', 'Please fill all card fields correctly.');
+        return;
+      }
+      const cards = Storage.get(KEYS.WALLET_CARDS) || [];
+      cards.push({
+        id: Utils.uuid(),
+        userId: user.id,
+        last4: num.slice(-4),
+        expiry,
+        holder,
+        createdAt: Utils.now()
+      });
+      Storage.set(KEYS.WALLET_CARDS, cards);
+      Toast.show('success', 'Card Added', 'Payment method saved successfully.');
+      document.querySelector('.modal-overlay')?.remove();
+      renderCards();
+    }
+
+    function deleteCard(id) {
+      if (confirm('Remove this card?')) {
+        const cards = Storage.get(KEYS.WALLET_CARDS) || [];
+        Storage.set(KEYS.WALLET_CARDS, cards.filter(c => c.id !== id));
+        renderCards();
+        Toast.show('success', 'Removed', 'Card removed.');
+      }
+    }
+
+    renderTransactions();
+    renderCards();
+  </script>
+</body>
+</html>

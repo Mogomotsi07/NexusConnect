@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link">💬 Messages</a>
+    <a href="profile.html" class="nav-link active">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>👤 Profile & Settings</h1>
+        <p>Manage your account, view your stats, and customize your experience.</p>
+      </div>
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-header-content">
+          <div class="profile-avatar-large" id="profileAvatar">?</div>
+          <div class="profile-info">
+            <h2 id="profileName">User Name</h2>
+            <div class="meta">
+              <span>📧 <span id="profileEmail">email@example.com</span></span>
+              <span>🏛️ <span id="profileInstitution">-</span></span>
+              <span id="profileBadge"></span>
+            </div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="value" id="statTrust">0</div>
+                <div class="label">Trust Score</div>
+              </div>
+              <div class="profile-stat">
+                <div class="value" id="statRating">0</div>
+                <div class="label">Avg Rating</div>
+              </div>
+              <div class="profile-stat">
+                <div class="value" id="statTransactions">0</div>
+                <div class="label">Transactions</div>
+              </div>
+              <div class="profile-stat">
+                <div class="value" id="statReferrals">0</div>
+                <div class="label">Referrals</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="edit">Edit Profile</button>
+        <button class="tab" data-tab="reviews">Reviews</button>
+        <button class="tab" data-tab="security">Security</button>
+      </div>
+
+      <!-- Edit Profile -->
+      <div class="tab-content active" id="editTab">
+        <div class="settings-section">
+          <h3>Personal Information</h3>
+          <form id="profileForm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="editName" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="editEmail" disabled>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Institution / Organization</label>
+                <input type="text" class="form-input" id="editInstitution">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Referral Code</label>
+                <input type="text" class="form-input" id="editReferral" disabled>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Save Changes</button>
+          </form>
+        </div>
+
+        <div class="settings-section">
+          <h3>Account Stats</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="stat-card">
+              <div class="stat-value" id="statRidesGiven">0</div>
+              <div class="stat-label">Rides Given</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="statItemsSold">0</div>
+              <div class="stat-label">Items Sold</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="statServicesDone">0</div>
+              <div class="stat-label">Services Done</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="statJoined">-</div>
+              <div class="stat-label">Member Since</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="tab-content" id="reviewsTab">
+        <div class="card">
+          <div class="card-header"><h3>⭐ Reviews Received</h3></div>
+          <div class="card-body" id="reviewsList">
+            <div class="empty-state">
+              <div class="empty-state-icon">⭐</div>
+              <h3>No Reviews Yet</h3>
+              <p>Complete transactions to receive reviews from other users.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="tab-content" id="securityTab">
+        <div class="settings-section">
+          <h3>Change Password</h3>
+          <form id="passwordForm">
+            <div class="form-group">
+              <label class="form-label">Current Password</label>
+              <input type="password" class="form-input" id="currentPassword" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-input" id="newPassword" minlength="6" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" class="form-input" id="confirmNewPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </form>
+        </div>
+        <div class="settings-section">
+          <h3 style="color:var(--danger)">Danger Zone</h3>
+          <p class="text-secondary mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+          <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+      });
+    });
+
+    function loadProfile() {
+      const currentUser = Auth.getCurrentUser();
+      if (!currentUser) return;
+
+      document.getElementById('profileAvatar').textContent = Utils.initials(currentUser.name);
+      document.getElementById('profileName').textContent = currentUser.name;
+      document.getElementById('profileEmail').textContent = currentUser.email;
+      document.getElementById('profileInstitution').textContent = currentUser.institution || 'Not set';
+
+      const vLevel = Utils.getVerificationLevel(currentUser);
+      document.getElementById('profileBadge').innerHTML = `<span class="verification-badge ${vLevel.class}">${vLevel.level}</span>`;
+
+      document.getElementById('statTrust').textContent = Utils.calculateTrustScore(currentUser);
+      document.getElementById('statRating').textContent = Reviews.getAverage(currentUser.id);
+
+      const txns = Wallet.getTransactions(currentUser.id);
+      document.getElementById('statTransactions').textContent = txns.length;
+      document.getElementById('statReferrals').textContent = currentUser.referralCount || 0;
+
+      document.getElementById('editName').value = currentUser.name;
+      document.getElementById('editEmail').value = currentUser.email;
+      document.getElementById('editInstitution').value = currentUser.institution || '';
+      document.getElementById('editReferral').value = currentUser.referralCode;
+
+      document.getElementById('statRidesGiven').textContent = Rides.getMyRides(currentUser.id).length;
+      document.getElementById('statItemsSold').textContent = Marketplace.getMyItems(currentUser.id).filter(i => i.status === 'sold').length;
+      const bookings = (Storage.get(KEYS.DELIVERIES) || []).filter(b => b.type === 'service' && b.providerId === currentUser.id && b.status === 'completed');
+      document.getElementById('statServicesDone').textContent = bookings.length;
+      document.getElementById('statJoined').textContent = Utils.formatDate(currentUser.createdAt);
+    }
+
+    loadProfile();
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      Auth.updateUser(user.id, {
+        name: document.getElementById('editName').value,
+        institution: document.getElementById('editInstitution').value
+      });
+      Toast.show('success', 'Profile Updated', 'Your changes have been saved.');
+      loadProfile();
+      UI.renderNav();
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const current = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmNewPassword').value;
+
+      if (current !== user.password) {
+        Toast.show('error', 'Wrong Password', 'Current password is incorrect.');
+        return;
+      }
+      if (newPass !== confirm) {
+        Toast.show('error', 'Mismatch', 'New passwords do not match.');
+        return;
+      }
+      Auth.updateUser(user.id, { password: newPass });
+      Toast.show('success', 'Password Updated', 'Your password has been changed.');
+      this.reset();
+    });
+
+    function deleteAccount() {
+      if (!confirm('Are you absolutely sure? This will delete ALL your data.')) return;
+      const users = Storage.get(KEYS.USERS) || [];
+      Storage.set(KEYS.USERS, users.filter(u => u.id !== user.id));
+      Auth.logout();
+    }
+
+    // Reviews
+    function renderReviews() {
+      const reviews = Reviews.getForUser(user.id);
+      const container = document.getElementById('reviewsList');
+      if (reviews.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⭐</div><h3>No Reviews Yet</h3><p>Complete transactions to receive reviews from other users.</p></div>`;
+      } else {
+        container.innerHTML = reviews.map(r => `
+          <div class="activity-item">
+            <div class="activity-icon" style="background:rgba(245,158,11,0.15);color:var(--warning)">⭐</div>
+            <div class="activity-content">
+              <p><strong>${Utils.escapeHtml(r.fromName)}</strong> rated you <strong>${r.rating}/5</strong></p>
+              <p class="text-secondary" style="margin-top:0.25rem">${Utils.escapeHtml(r.comment || '')}</p>
+              <div class="time">${Utils.timeAgo(r.createdAt)}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+    renderReviews();
+  </script>
+</body>
+</html>

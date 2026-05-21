@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - NexusConnect</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .back-btn{display:none;margin-bottom:1rem}
+    @media(max-width:768px){
+      .back-btn{display:flex}
+      .chat-area{position:fixed;inset:64px 0 0;z-index:998;background:var(--bg-primary);display:none}
+      .chat-area.show{display:flex}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="dashboard.html" class="logo"><div class="logo-icon">N</div>NexusConnect</a>
+      <div class="nav-links" id="mainNav"></div>
+      <div class="nav-actions">
+        <a href="wallet.html" class="wallet-badge" id="navWallet"><span>💰</span>P0.00</a>
+        <a href="messages.html" class="nav-btn" id="navMessages"><span>💬</span></a>
+        <a href="notifications.html" class="nav-btn" id="navNotifications"><span>🔔</span></a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-header"><div class="name" id="userMenuName">User</div><div class="email" id="userMenuEmail">user@example.com</div></div>
+            <div class="dropdown-divider"></div>
+            <a href="profile.html" class="dropdown-item">👤 Profile</a>
+            <a href="verification.html" class="dropdown-item">✓ Verification</a>
+            <a href="referrals.html" class="dropdown-item">🎁 Referrals</a>
+            <a href="saved.html" class="dropdown-item">🔖 Saved Items</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" onclick="Auth.logout();return false;">🚪 Log Out</a>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+    <a href="rides.html" class="nav-link">🚗 Rides</a>
+    <a href="marketplace.html" class="nav-link">🛒 Marketplace</a>
+    <a href="services.html" class="nav-link">🛠️ Services</a>
+    <a href="deliveries.html" class="nav-link">📦 Deliveries</a>
+    <a href="wallet.html" class="nav-link">💰 Wallet</a>
+    <a href="messages.html" class="nav-link active">💬 Messages</a>
+    <a href="profile.html" class="nav-link">👤 Profile</a>
+  </div>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>💬 Messages</h1>
+        <p>Chat with buyers, sellers, drivers, and service providers.</p>
+      </div>
+
+      <div class="messages-layout">
+        <div class="conversations-list" id="conversationsList">
+          <div class="conversations-header"><h3>Conversations</h3></div>
+          <div id="conversations"></div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+          <button class="back-btn btn btn-sm btn-secondary" id="backBtn" onclick="closeChat()">← Back</button>
+          <div class="chat-header" id="chatHeader">
+            <div class="conversation-avatar" id="chatAvatar">?</div>
+            <div class="chat-header-info">
+              <h4 id="chatName">Select a conversation</h4>
+              <div class="status" id="chatStatus">Tap a conversation to start chatting</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-area">
+            <input type="text" class="form-input" id="messageInput" placeholder="Type a message..." disabled>
+            <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = Auth.getCurrentUser();
+    if (!user) window.location.href = 'login.html';
+
+    let activeConversation = null;
+
+    function renderConversations() {
+      const conversations = Messages.getConversations(user.id);
+      const container = document.getElementById('conversations');
+      if (conversations.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="padding:2rem 1rem"><div class="empty-state-icon" style="width:60px;height:60px;font-size:1.5rem">💬</div><h3 style="font-size:1rem">No Messages</h3><p style="font-size:0.8125rem">Start a conversation from rides, marketplace, or services.</p></div>`;
+      } else {
+        container.innerHTML = conversations.map(c => {
+          const lastMsg = c.messages[c.messages.length - 1];
+          const otherName = Messages.getUserName(c.userId);
+          return `
+            <div class="conversation-item ${c.unread > 0 ? 'unread' : ''} ${activeConversation === c.userId ? 'active' : ''}" onclick="openChat('${c.userId}')">
+              <div class="conversation-avatar">${Utils.initials(otherName)}</div>
+              <div class="conversation-info">
+                <div class="name">${Utils.escapeHtml(otherName)}<span class="time">${Utils.timeAgo(lastMsg.createdAt)}</span></div>
+                <div class="preview ${c.unread > 0 ? 'unread' : ''}">${Utils.escapeHtml(lastMsg.content)}</div>
+              </div>
+              ${c.unread > 0 ? `<div class="unread-dot"></div>` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function openChat(otherId) {
+      activeConversation = otherId;
+      const otherName = Messages.getUserName(otherId);
+      document.getElementById('chatAvatar').textContent = Utils.initials(otherName);
+      document.getElementById('chatName').textContent = Utils.escapeHtml(otherName);
+      document.getElementById('chatStatus').textContent = 'Online';
+      document.getElementById('messageInput').disabled = false;
+      document.getElementById('sendBtn').disabled = false;
+
+      Messages.markRead(user.id, otherId);
+      renderMessages(otherId);
+      renderConversations();
+      UI.renderNav();
+
+      if (window.innerWidth <= 768) {
+        document.getElementById('chatArea').classList.add('show');
+      }
+    }
+
+    function closeChat() {
+      activeConversation = null;
+      document.getElementById('chatArea').classList.remove('show');
+      renderConversations();
+    }
+
+    function renderMessages(otherId) {
+      const messages = Messages.getMessages(user.id, otherId);
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = messages.map(m => `
+        <div class="message ${m.fromUserId === user.id ? 'sent' : 'received'}">
+          <div class="message-bubble">${Utils.escapeHtml(m.content)}</div>
+          <div class="message-time">${Utils.formatTime(m.createdAt)}</div>
+        </div>
+      `).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const content = input.value.trim();
+      if (!content || !activeConversation) return;
+      Messages.send(activeConversation, content);
+      input.value = '';
+      renderMessages(activeConversation);
+      renderConversations();
+    }
+
+    document.getElementById('messageInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Check URL params for pre-selected conversation
+    const params = new URLSearchParams(window.location.search);
+    const toId = params.get('to');
+    if (toId) {
+      // Ensure conversation exists
+      const users = Storage.get(KEYS.USERS) || [];
+      if (users.some(u => u.id === toId)) {
+        openChat(toId);
+      }
+    }
+
+    renderConversations();
+  </script>
+</body>
+</html>
